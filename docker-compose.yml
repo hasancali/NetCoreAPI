@@ -1,0 +1,34 @@
+version: "3.7"
+
+networks:
+  exelor:
+    driver: bridge
+
+services:
+  exelor_api:
+    image: NetCoreAPI
+    container_name: NetCoreAPI
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - "NetCoreAPIDb"
+    ports:
+      - 5000:5000
+    networks:
+      - Dockerfile
+  exelor_db:
+    image: ${DB_IMAGE}
+    container_name: NetCoreAPIDb
+    ports:
+      - ${HOST_PORT}:${LOCAL_PORT}
+    volumes:
+      - data:${LOCAL_DATADIR}
+    env_file: .env
+    networks:
+      - Dockerfile
+
+volumes:
+  data:
+    name: ${HOST_DATAVOLUMENAME}
+    external: false # creates a volume if not present
